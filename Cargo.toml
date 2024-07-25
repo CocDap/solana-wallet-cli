@@ -1,0 +1,10 @@
+[package]
+name = "solana-wallet-cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+solana-sdk = "2.0.3"
+thiserror = "1.0.63"
+clap = { version = "4.5.11", features = ["derive"]}
+solana-client = "2.0.3"
