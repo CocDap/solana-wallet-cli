@@ -4,9 +4,10 @@ pub mod error;
 pub mod utils;
 use error::{Error, Result};
 use solana_client::rpc_client::RpcClient;
-use solana_sdk::{commitment_config::CommitmentConfig, signature::Keypair, signer::EncodableKey};
+use solana_sdk::{commitment_config::CommitmentConfig, native_token::lamports_to_sol, signature::Keypair, signer::EncodableKey};
 
 use utils::{convert_address_to_pubkey, Chains};
+
 
 #[derive(Parser, Debug)]
 struct Args {
@@ -56,7 +57,13 @@ fn main() -> Result<()> {
             };
 
         }
-        Commands::Balance { address } => todo!(),
+        Commands::Balance { address } => {
+            let pubkey = convert_address_to_pubkey(address.as_str())?;
+            let balance = client.get_account(&pubkey).unwrap().lamports;
+            println!("Balance of {address} is {} SOL", lamports_to_sol(balance));
+
+
+        },
         Commands::Transfer { from, to, amount } => todo!(),
     }
 

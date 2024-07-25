@@ -24,6 +24,6 @@ impl TryFrom<&str> for Chains {
 
 pub fn convert_address_to_pubkey(address: &str) -> Result<Pubkey, Error> {
     let pubkey =
-        Pubkey::from_str(address).map_err(|_| Error::ConversionPubkeyError)?;
+        Pubkey::from_str(address).map_err(|_| Error::InvalidAddress)?;
     Ok(pubkey)
 }
