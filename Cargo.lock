@@ -3729,6 +3729,7 @@ dependencies = [
 name = "solana-wallet-cli"
 version = "0.1.0"
 dependencies = [
+ "bs58",
  "clap 4.5.11",
  "solana-client",
  "solana-sdk",

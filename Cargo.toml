@@ -8,3 +8,4 @@ solana-sdk = "2.0.3"
 thiserror = "1.0.63"
 clap = { version = "4.5.11", features = ["derive"]}
 solana-client = "2.0.3"
+bs58 = "0.5.1"

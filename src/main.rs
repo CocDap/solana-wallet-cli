@@ -1,12 +1,14 @@
+use std::path::Path;
+
 use clap::{Parser, Subcommand};
 
 pub mod error;
 pub mod utils;
 use error::{Error, Result};
 use solana_client::rpc_client::RpcClient;
-use solana_sdk::{commitment_config::CommitmentConfig, native_token::lamports_to_sol, signature::Keypair, signer::EncodableKey};
+use solana_sdk::{commitment_config::CommitmentConfig, native_token::lamports_to_sol, signature::Keypair, signer::{EncodableKey, Signer}, system_transaction};
 
-use utils::{convert_address_to_pubkey, Chains};
+use utils::{convert_address_to_pubkey, open_keypair_file, Chains};
 
 
 #[derive(Parser, Debug)]
@@ -37,9 +39,21 @@ fn main() -> Result<()> {
 
     match args.cmd {
         Commands::Generate { path } => {
+            let file_path = match path {
+                Some(p) => p,
+                None => "keypair.json".to_string()
+
+            };
             let wallet = Keypair::new();
+            let pubkey = wallet.pubkey();
+            // convert to bs58 address
+            let address = bs58::encode(pubkey).into_string();
+
+
+            println!("Your address is :{}", address);
+            // write encode keypair
             let _ = wallet
-                .write_to_file("keypair.json")
+                .write_to_file(file_path)
                 .map_err(|_| error::Error::IO(std::io::ErrorKind::NotFound.into()))?;
         }
         Commands::Faucet { address, amount } => {
@@ -64,7 +78,18 @@ fn main() -> Result<()> {
 
 
         },
-        Commands::Transfer { from, to, amount } => todo!(),
+        Commands::Transfer { to, amount, path } => {
+            // load keypair 
+            let p = Path::new(path.as_str());
+            let keypair = open_keypair_file(p)?;
+            let to_pubkey = convert_address_to_pubkey(to.as_str())?;
+            let latest_block_hash = client.get_latest_blockhash().unwrap();
+
+            // Perform transaction transfer
+            let tx = system_transaction::transfer(&keypair, &to_pubkey, amount, latest_block_hash);
+            let signature = client.send_and_confirm_transaction(&tx).map_err(error::Error::TransactionError)?;
+            println!("Signature:{signature}");
+        },
     }
 
     Ok(())
@@ -84,11 +109,11 @@ enum Commands {
     },
     Transfer {
         #[clap(long)]
-        from: String,
-        #[clap(long)]
         to: String,
         #[clap(long)]
         amount: u64,
+        #[clap(long)]
+        path: String
     },
     Balance {
         #[clap(long)]
