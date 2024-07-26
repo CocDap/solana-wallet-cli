@@ -24,18 +24,21 @@ Make a simple local solana wallet cli
 ## Usage
 
 ```rust
+Simple local solana wallet
+
 Usage: solana-wallet-cli [OPTIONS] <COMMAND>
 
 Commands:
-  generate  
-  faucet    
-  transfer  
-  balance   
+  generate  Generate local keypair
+  faucet    Get free SOL
+  transfer  Transfer some SOLs from sender(keypair) to receiver
+  balance   Check SOL balance
   help      Print this message or the help of the given subcommand(s)
 
 Options:
   -e <ENVIRONMENT>      [default: dev]
   -h, --help            Print help
+  -V, --version         Print version
 ```
 
 ## Step 

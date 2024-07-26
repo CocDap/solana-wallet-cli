@@ -12,6 +12,7 @@ use utils::{convert_address_to_pubkey, open_keypair_file, Chains};
 
 
 #[derive(Parser, Debug)]
+#[command(author ="CocDap", version ="0.0.1", about = "Simple local solana wallet")]
 struct Args {
     #[clap(short, default_value = "dev")]
     environment: Option<String>,
@@ -97,16 +98,19 @@ fn main() -> Result<()> {
 
 #[derive(Subcommand, Debug)]
 enum Commands {
+    #[clap(about = "Generate local keypair")]
     Generate {
-        #[clap(long)]
+        #[clap(long, help = "Path to save keypair.json")]
         path: Option<String>,
     },
+    #[clap(about = "Get free SOL")]
     Faucet {
         #[clap(long)]
         address: String,
         #[clap(long)]
         amount: u64,
     },
+    #[clap(about = "Transfer some SOLs from sender(keypair) to receiver")]
     Transfer {
         #[clap(long)]
         to: String,
@@ -115,6 +119,7 @@ enum Commands {
         #[clap(long)]
         path: String
     },
+    #[clap(about = "Check SOL balance")]
     Balance {
         #[clap(long)]
         address: String,
